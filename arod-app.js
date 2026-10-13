@@ -90,4 +90,84 @@ function rr(){try{localStorage.removeItem("arod_rem")}catch(e){}alert("Reminders
 function usbSave(){var d={mastercore:"AROD",savedAt:new Date().toISOString(),vaults:VL};var json=JSON.stringify(d,null,2);var blob=new Blob([json],{type:"application/json"});var stamp=new Date().toISOString().replace(/[:.]/g,"-");var fn="AROD-memory-"+stamp+".json";if("showSaveFilePicker" in window){window.showSaveFilePicker({suggestedName:fn,types:[{description:"AROD file",accept:{"application/json":[".json"]}}]}).then(function(h){return h.createWritable()}).then(function(w){return w.write(blob).then(function(){return w.close()})}).then(function(){alert("Saved: "+fn)}).catch(function(e){alert("Failed: "+e)});}else if(navigator.share&&navigator.canShare){var f=new File([blob],fn,{type:"application/json"});if(!navigator.canShare({files:[f]})){alert("USB_WRITE_FAILED");return;}navigator.share({files:[f],title:fn}).then(function(){alert("Shared")}).catch(function(e){alert("Failed: "+e)});}else{alert("USB_ADAPTER_NOT_CONFIGURED");}}
 window.AROD={rem:rem,thm:thm,usbSave:usbSave,rr:rr,go:show,key:openKey,keyClear:function(){clearKey();alert("API key cleared.")}};
 function boot(){applyTheme(getTheme());renderTabs();show("home");document.getElementById("themeBtn").onclick=thm;document.getElementById("remBtn").onclick=rem;document.getElementById("themeClose").onclick=function(){hm("themeModal")};document.getElementById("keySave").onclick=saveKey;document.getElementById("keyClear").onclick=function(){clearKey();hm("keyModal");show("chat")};document.getElementById("keyClose").onclick=function(){hm("keyModal")};if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(function(){})}setTimeout(rem,600);}
-boot();
+boot();(function(){
+var VOICE_KEY="arod_voice";
+function voiceOn(){try{return localStorage.getItem(VOICE_KEY)==="1"}catch(e){return false}}
+function setVoice(v){try{localStorage.setItem(VOICE_KEY,v?"1":"0")}catch(e){}}
+function speak(text){
+  if(!voiceOn()||!("speechSynthesis" in window))return;
+  var clean=String(text).replace(/[\u{1F300}-\u{1FAFF}]/gu,"").trim();
+  if(!clean)return;
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(clean);
+  u.rate=1.0;u.pitch=1.0;u.lang="en-US";
+  var vs=window.speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){
+    if(vs[i].lang==="en-US"&&/google|natural/i.test(vs[i].name)){u.voice=vs[i];break}
+  }
+  window.speechSynthesis.speak(u);
+}
+var lastSpoken="";
+function checkSpeak(){
+  var log=document.getElementById("chatLog");
+  if(!log)return;
+  var all=log.querySelectorAll(".ca");
+  if(!all.length)return;
+  var last=all[all.length-1];
+  var t=last.textContent||"";
+  if(t&&t!==lastSpoken){lastSpoken=t;speak(t)}
+}
+var obs=new MutationObserver(checkSpeak);
+function attachChat(){
+  var log=document.getElementById("chatLog");
+  if(!log)return;
+  obs.disconnect();obs.observe(log,{childList:true,subtree:true});
+  if(document.getElementById("micBtn"))return;
+  var row=log.parentNode.querySelector(".crow");
+  if(!row)return;
+  var send=row.querySelector("#chatSend");
+  if(!send)return;
+  var mic=document.createElement("button");
+  mic.id="micBtn";mic.className="sb";mic.textContent="🎤";mic.title="Speak your message";
+  mic.onclick=listen;
+  row.insertBefore(mic,send);
+}
+function listen(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("Voice input is not supported in this browser.");return}
+  var rec=new SR();
+  rec.lang="en-US";rec.interimResults=false;rec.maxAlternatives=1;
+  var mic=document.getElementById("micBtn");
+  if(mic){mic.textContent="🔴";mic.disabled=true}
+  rec.onresult=function(e){
+    var ta=document.getElementById("chatIn");
+    if(ta){ta.value=(ta.value?ta.value+" ":"")+e.results[0][0].transcript}
+  };
+  rec.onerror=function(e){
+    if(mic){mic.textContent="🎤";mic.disabled=false}
+    alert("Voice error: "+e.error);
+  };
+  rec.onend=function(){if(mic){mic.textContent="🎤";mic.disabled=false}};
+  rec.start();
+}
+function attachToggle(){
+  if(document.getElementById("voiceBtn"))return;
+  var hh=document.querySelector(".hh");
+  if(!hh)return;
+  var b=document.createElement("button");
+  b.id="voiceBtn";b.className="sb";
+  b.textContent=voiceOn()?"🔊":"🔇";
+  b.title="Toggle AROD speaking";
+  b.onclick=function(){
+    var v=!voiceOn();setVoice(v);b.textContent=v?"🔊":"🔇";
+    if(!v&&window.speechSynthesis){window.speechSynthesis.cancel()}
+  };
+  hh.appendChild(b);
+}
+var boot=new MutationObserver(function(){attachChat();attachToggle()});
+function init(){
+  attachChat();attachToggle();
+  boot.observe(document.body,{childList:true,subtree:true});
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",init)}else{init()}
+})();
