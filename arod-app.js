@@ -26,7 +26,39 @@ function saveChat(m){try{localStorage.setItem("arod_chat",JSON.stringify(m.slice
 function getKey(){try{return localStorage.getItem("arod_key")||""}catch(e){return""}}
 function setKey(k){try{localStorage.setItem("arod_key",k)}catch(e){}}
 function clearKey(){try{localStorage.removeItem("arod_key")}catch(e){}}
-async function callAPI(msgs){var k=getKey();if(!k)return{error:"NO_KEY"};try{var r=await fetch("https://api.deepseek.com/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+k},body:JSON.stringify({model:"deepseek-chat",messages:[{role:"system",content:SYS}].concat(msgs),temperature:0.7})});if(!r.ok){var t=await r.text();return{error:"API "+r.status+": "+t.slice(0,200)}}var d=await r.json();return{text:d.choices[0].message.content};}catch(e){return{error:"NETWORK: "+String(e).slice(0,200)}}}
+async function callAPI(msgs){
+  var k = getKey();
+  if(!k) return {error:"NO_KEY"};
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent";
+  var contents = msgs.map(function(m){
+    return {
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{text: m.content}]
+    };
+  });
+  try {
+    var r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": k
+      },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{text: SYS}] },
+        contents: contents,
+        generationConfig: { temperature: 0.7 }
+      })
+    });
+    if(!r.ok){
+      var t = await r.text();
+      return {error: "API " + r.status + ": " + t.slice(0, 200)};
+    }
+    var d = await r.json();
+    return {text: d.candidates[0].content.parts[0].text};
+  } catch(e){
+    return {error: "NETWORK: " + String(e).slice(0, 200)};
+  }
+}
 var TABS=[["home","🏠 Home"],["chat","💬 Chat"],["floor","🧱 Floor"],["blog","📓 Blog"],["conscience","🧭 Conscience"],["vaults","🗄️ Vaults"],["media","🎬 Media"],["files","📁 Files"],["usb","🔌 USB"],["google","🔗 Google"],["permissions","🔐 Permissions"],["settings","⚙️ Settings"]];
 var VL=[["music_vault","audio assets"],["illustration_vault","charts, diagrams, timelines"],["eternal_wheels_vault","The Eternal Wheels series"],["seal_vault","The Seal record"],["briar_vault","BRIAR preserved source"],["timeline_vault","chronology visuals"],["media_workspace_vault","editing projects"],["social_export_vault","destination-ready exports"],["transcript_vault","transcripts and captions"],["file_trash_vault","deleted files"],["usb_memory_vault","memory on USB"],["watchtower_reference_vault","Watchtower reference material"],["doctrine_review_vault","claim review"]];
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
