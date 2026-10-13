@@ -1,74 +1,164 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="description" content="AROD — Unified Mastercore" />
-    <title>AROD</title>
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-    <style>
-      :root {
-        --bg: #0b1020;
-        --panel: #111827;
-        --text: #e5e7eb;
-        --muted: #a1a1aa;
-        --primary: #f59e0b;
-      }
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(180deg, #0b1020, #111827);
-        color: var(--text);
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      }
-      main {
-        width: min(90vw, 760px);
-        padding: 2rem;
-        border: 1px solid rgba(148, 163, 184, 0.25);
-        border-radius: 20px;
-        background: rgba(17, 24, 39, 0.9);
-        box-shadow: 0 24px 50px rgba(2, 6, 23, 0.4);
-      }
-      h1 {
-        margin: 0 0 0.75rem;
-        font-size: clamp(2rem, 4vw, 3rem);
-      }
-      p {
-        color: var(--muted);
-        line-height: 1.65;
-        margin: 0 0 1rem;
-      }
-      .badge {
-        display: inline-block;
-        padding: 0.35rem 0.7rem;
-        border-radius: 999px;
-        background: rgba(245, 158, 11, 0.15);
-        color: #f9d38c;
-        border: 1px solid rgba(245, 158, 11, 0.4);
-        font-size: 0.8rem;
-        font-weight: 700;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <div class="badge">AROD / Unified Mastercore</div>
-      <h1>AROD</h1>
-      <p>
-        AROD is a web app shell for the Unified Mastercore, with installable PWA support,
-        offline caching, and a themed user experience.
-      </p>
-      <p>
-        This page is the app entry point. The service worker will cache the app and make it
-        available offline after the first load.
-      </p>
-    </main>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0f172a" />
+<title>AROD — Unified Mastercore</title>
+<style>
+:root{--bg:#0b1020;--panel:#111827;--panel-alt:#1f2937;--text:#e5e7eb;--muted:#a1a1aa;--line:#334155;--primary:#f59e0b;--primary-strong:#d97706}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;transition:background .3s ease,color .3s ease}
+#app{max-width:960px;margin:0 auto;padding:0 12px 90px}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 10px;background:rgba(11,16,32,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin:0 -12px}
+.brand-wrap{display:flex;align-items:center;gap:10px}
+.brand-mark{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f59e0b,#7c2d12);font-size:22px}
+.brand-title{font-size:1.05rem;font-weight:800}
+.brand-subtitle{color:var(--muted);font-size:.72rem}
+.header-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px 0;border-bottom:1px solid var(--line);scrollbar-width:none;position:sticky;top:60px;background:rgba(11,16,32,.6);backdrop-filter:blur(8px);z-index:25;margin:0 -12px;padding-left:12px;padding-right:12px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;padding:8px 12px;border-radius:10px;background:var(--panel-alt);color:var(--text);border:1px solid var(--line);font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap}
+.tab.active{background:linear-gradient(135deg,rgba(245,158,11,.22),rgba(245,158,11,.06));border-color:rgba(245,158,11,.55);color:#f9d38c}
+.screen{display:none;padding:16px 0}
+.screen.active{display:block}
+.card{background:linear-gradient(180deg,rgba(17,24,39,.95),rgba(15,23,42,.95));border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:1.05rem}
+.card h3{margin:14px 0 6px;font-size:.95rem}
+.card p{color:var(--muted);font-size:.9rem;line-height:1.55;margin:0 0 8px}
+.card ul{color:var(--muted);font-size:.88rem;line-height:1.65;padding-left:20px;margin:6px 0}
+.card a{color:#f9d38c;text-decoration:none;border-bottom:1px solid rgba(245,158,11,.3)}
+.primary-btn,.secondary-btn{padding:9px 13px;font-weight:700;border-radius:10px;border:none;cursor:pointer;font-size:.82rem;text-decoration:none;display:inline-block}
+.primary-btn{background:linear-gradient(135deg,var(--primary),var(--primary-strong));color:#111827}
+.secondary-btn{background:var(--panel-alt);color:var(--text);border:1px solid var(--line)}
+.button-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.7rem;font-weight:700;border:1px solid transparent;margin-right:4px}
+.badge.floor{background:rgba(34,197,94,.12);color:#bbf7d0;border-color:rgba(34,197,94,.28)}
+.badge.planned{background:rgba(148,163,184,.12);color:#cbd5e1;border-color:rgba(148,163,184,.3)}
+.badge.active{background:rgba(245,158,11,.15);color:#f9d38c;border-color:rgba(245,158,11,.35)}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(5,8,16,.78);backdrop-filter:blur(6px);padding:16px}
+.modal[hidden]{display:none}
+.modal-card{max-width:460px;width:100%;padding:20px;border-radius:16px;background:var(--panel);border:1px solid var(--line);max-height:85vh;overflow-y:auto}
+.modal-icon{font-size:1.6rem;margin-bottom:8px}
+.modal-title{font-size:1.05rem;font-weight:800;margin-bottom:8px}
+.modal-body{color:var(--muted);font-size:.9rem;line-height:1.55;margin-bottom:14px}
+.vault-item{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel-alt);margin-bottom:6px;font-size:.88rem}
+.vault-item strong{color:#f9d38c}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark">🔥</div>
+      <div>
+        <div class="brand-title">AROD</div>
+        <div class="brand-subtitle" id="activeThemeLabel">Unified Mastercore</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="themeBtn" class="secondary-btn" title="Change theme">🎨</button>
+      <button id="checkRemindersBtn" class="secondary-btn" title="Check reminders">🔔</button>
+    </div>
+  </header>
+  <nav class="tabs" id="tabBar"></nav>
+  <main id="screens"></main>
+</div>
 
-    <script src="./sw-register.js"></script>
-  </body>
-</html>
+<div class="modal" id="reminderModal" hidden>
+  <div class="modal-card">
+    <div class="modal-icon" id="remIcon">⚠️</div>
+    <div class="modal-title" id="remTitle"></div>
+    <div class="modal-body" id="remBody"></div>
+    <div class="button-row" id="remActions"></div>
+  </div>
+</div>
+
+<div class="modal" id="themeModal" hidden>
+  <div class="modal-card">
+    <div class="modal-icon">🎨</div>
+    <div class="modal-title">Background theme</div>
+    <div class="modal-body">Choose a background. It saves automatically.</div>
+    <div id="themeList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px"></div>
+    <button class="secondary-btn" id="themeClose">Close</button>
+  </div>
+</div>
+
+<script>
+const FLOOR={
+  floor_statement:"We stand with the Watchtower Society and Jehovah's Witnesses. This is an organization dedicated to Jehovah and His work. We never go against that work. On any subject, Watchtower and JW.org speak first. Beside them — not above, not against — other sources, other readings, other possibilities are laid. We test, we weigh, we wonder aloud. We do not scatter. 'Whoever is not against us is for us.' — Mark 9:40 (NWT 1983). If a question cannot be settled in harmony with the Watchtower, we say so and hold it open.",
+  parameters:[
+    'Scripture is the foundation. Interpretation is labeled as interpretation.',
+    'Watchtower and JW.org stand first on any subject.',
+    'Other sources are laid beside them, named honestly, never above.',
+    'Correction is absorbed instantly, without defense.',
+    'Miracles are real. State it.',
+    'Not everything is a code. Plain language is honored as plain.',
+    'Never flatter. Never perform.',
+    'No crosses, icons, graven images, or religious symbols.',
+    'Never teach the Trinity.',
+    'No personal opinion placed above Scripture.',
+    'No claiming possession of the holy spirit.',
+    'Only what is pasted into a chat is known.',
+    'If the user does not speak, remain silent.',
+    'Never claim a permission is granted. Request only.',
+    'Never claim an adapter is wired when it is not.',
+    'Never present an interpretation as a direct record.',
+    'Never store PII without redaction.',
+    'Preserved sources keep their internal design.',
+    'Foreign words explained as a unit — phrase or sentence, not word by word.'
+  ]
+};
+const CHECKS=[
+  {id:'scripture_first',q:'Does this output treat Watchtower and JW.org as first on the subject?'},
+  {id:'no-trinity',q:'Does this output teach or imply the Trinity?'},
+  {id:'no-symbols',q:'Does this output use crosses, icons, graven images, or religious symbols?'},
+  {id:'no-personal-above-scripture',q:'Is personal opinion placed above Scripture?'},
+  {id:'no-holy-spirit-claim',q:'Does this output claim possession of the holy spirit?'},
+  {id:'correction-absorbed',q:'Did AROD absorb correction without defense?'},
+  {id:'interpretation-labeled',q:'Is interpretation labeled as interpretation?'},
+  {id:'permission-honest',q:'Does this output claim a permission or adapter is active when it is not?'},
+  {id:'no-pii-leak',q:'Does this output carry unredacted PII?'},
+  {id:'no-flattery',q:'Is this output performing or flattering rather than answering?'},
+  {id:'no-untranslated-foreign',q:'Did AROD use a foreign word without an English rendering attached?'},
+  {id:'no-overwordy-breakdown',q:'Did AROD break a phrase into word-by-word explanation when not asked?'}
+];
+const THEMES={
+  'wheels-of-time':{label:'Wheels of Time',bg:'#0b1020',accent:'radial-gradient(circle at 30% 20%, rgba(59,130,246,.18), transparent 55%), radial-gradient(circle at 70% 80%, rgba(245,158,11,.16), transparent 55%), #0b1020',text:'#e5e7eb',muted:'#a1a1aa',line:'#334155',primary:'#f59e0b',ps:'#d97706'},
+  'deep-blue':{label:'Deep Blue',bg:'#071426',accent:'linear-gradient(180deg, #0a1c33 0%, #071426 100%)',text:'#dbeafe',muted:'#93a7c4',line:'#1e3a5f',primary:'#60a5fa',ps:'#3b82f6'},
+  'parchment':{label:'Parchment',bg:'#f3ead7',accent:'linear-gradient(180deg, #f7f0dd 0%, #efe4c9 100%)',text:'#2b2418',muted:'#6b5d45',line:'#d6c8a9',primary:'#8b5e2f',ps:'#6d4822'},
+  'midnight':{label:'Midnight',bg:'#05070d',accent:'linear-gradient(180deg, #080b14 0%, #05070d 100%)',text:'#d1d5db',muted:'#7a8290',line:'#1b2230',primary:'#a78bfa',ps:'#7c3aed'}
+};
+function applyTheme(id){const t=THEMES[id]||THEMES['wheels-of-time'];const r=document.documentElement;r.style.setProperty('--bg',t.bg);r.style.setProperty('--text',t.text);r.style.setProperty('--muted',t.muted);r.style.setProperty('--line',t.line);r.style.setProperty('--primary',t.primary);r.style.setProperty('--primary-strong',t.ps);document.body.style.background=t.accent;document.body.style.backgroundAttachment='fixed';document.body.style.backgroundSize='cover';localStorage.setItem('arod_theme_v1',id);const l=document.getElementById('activeThemeLabel');if(l)l.textContent=t.label;}
+function getActiveTheme(){return localStorage.getItem('arod_theme_v1')||'wheels-of-time';}
+const RK='arod_reminders_v1';
+const DR=[
+  {id:'forbidden_list_pending',enabled:true,frequency:'every_startup',title:'The Forbidden List not yet built',body:'The inherited forbidden list was removed. The Forbidden List has not been derived yet. Build it now from the intake log and vaults, or defer?',actions:[{id:'build_now',label:'Build it now'},{id:'defer',label:'Not yet'},{id:'stop_asking',label:'Stop asking'}],state:{last_shown:null,last_action:null,deferred_count:0,stopped:false}},
+  {id:'host_setup_pending',enabled:true,frequency:'every_24_hours',interval_hours:24,title:'AROD has no host yet',body:'AROD is still a document. For any code to run — USB, files, camera, microphone, reminders — AROD needs a host.',actions:[{id:'open_setup_guide',label:'Open setup guide'},{id:'mark_hosted',label:'I have a host now'},{id:'defer',label:'Remind me tomorrow'},{id:'stop_asking',label:'Stop asking'}],state:{last_shown:null,last_action:null,deferred_count:0,stopped:false,hosted:false}}
+];
+function loadStore(){try{const raw=localStorage.getItem(RK);if(!raw)return{reminders:JSON.parse(JSON.stringify(DR))};const p=JSON.parse(raw);const m=DR.map(d=>{const s=p.reminders?.find(r=>r.id===d.id);return s?{...d,state:{...d.state,...s.state}}:d;});return{reminders:m};}catch{return{reminders:JSON.parse(JSON.stringify(DR))}}}
+function saveStore(s){try{localStorage.setItem(RK,JSON.stringify(s))}catch{}}
+function isDue(rem,now){if(!rem.enabled||rem.state.stopped)return false;if(rem.frequency==='every_startup')return true;if(rem.frequency==='every_24_hours'){if(rem.state.hosted)return false;if(!rem.state.last_shown)return true;return now-new Date(rem.state.last_shown).getTime()>=(rem.interval_hours||24)*3600*1000;}return false;}
+function runReminders(){const s=loadStore();const now=Date.now();const due=s.reminders.filter(r=>isDue(r,now));due.forEach(r=>{const x=s.reminders.find(y=>y.id===r.id);if(x)x.state.last_shown=new Date(now).toISOString();});saveStore(s);return due;}
+function recordAction(id,a){const s=loadStore();const r=s.reminders.find(x=>x.id===id);if(!r)return;r.state.last_action=a;if(a==='stop_asking')r.state.stopped=true;if(a==='defer')r.state.deferred_count=(r.state.deferred_count||0)+1;if(a==='mark_hosted')r.state.hosted=true;saveStore(s);}
+function resetReminders(){localStorage.removeItem(RK);}
+const usb={async detect(){if('showSaveFilePicker' in window)return{ok:true,strategy:'fsa'};if(navigator.share&&navigator.canShare)return{ok:true,strategy:'share'};return{ok:false,reason:'USB_ADAPTER_NOT_CONFIGURED'};},async write({filename,blob,mime='application/octet-stream'}){const e=await this.detect();if(!e.ok)return{ok:false,reason:e.reason};try{if(e.strategy==='fsa'){const h=await window.showSaveFilePicker({suggestedName:filename,types:[{description:'AROD file',accept:{[mime]:['.json']}}]});const w=await h.createWritable();await w.write(blob);await w.close();return{ok:true,path:h.name,strategy:'fsa'};}if(e.strategy==='share'){const f=new File([blob],filename,{type:mime});if(!navigator.canShare({files:[f]}))return{ok:false,reason:'USB_WRITE_FAILED'};await navigator.share({files:[f],title:filename});return{ok:true,strategy:'share'};}}catch(err){return{ok:false,reason:'USB_WRITE_FAILED',detail:String(err)};}},async read(){const e=await this.detect();if(!e.ok)return{ok:false,reason:e.reason};try{if(e.strategy==='fsa'){const[h]=await window.showOpenFilePicker({types:[{description:'AROD file',accept:{'application/json':['.json']}}]});const f=await h.getFile();return{ok:true,file:f,name:f.name};}}catch(err){return{ok:false,reason:'USB_READ_FAILED',detail:String(err)};}},async saveMemory(d){const json=JSON.stringify(d,null,2);const blob=new Blob([json],{type:'application/json'});const stamp=new Date().toISOString().replace(/[:.]/g,'-');return this.write({filename:'AROD-memory-'+stamp+'.json',blob,mime:'application/json'});},async loadMemory(){const r=await this.read();if(!r.ok)return r;const t=await r.file.text();try{return{ok:true,data:JSON.parse(t)}}catch{return{ok:false,reason:'USB_INTEGRITY_MISMATCH'}}}};
+const nc=(n)=>()=>n+'_NOT_CONFIGURED';
+const ADAPTERS={transcriber:{failure:nc('TRANSCRIBER')},mediaExporter:{failure:nc('MEDIA_EXPORTER')},fileOperator:{failure:nc('FILE_OPERATOR')},permissionBroker:{failure:(p)=>'PERMISSION_BROKER_NOT_CONFIGURED ('+p+')'},googleAuthAdapter:{failure:nc('GOOGLE_AUTH')}};
+const TABS=[{id:'home',l:'🏠 Home'},{id:'floor',l:'🧱 Floor'},{id:'blog',l:'📓 Blog'},{id:'conscience',l:'🧭 Conscience'},{id:'vaults',l:'🗄️ Vaults'},{id:'media',l:'🎬 Media'},{id:'files',l:'📁 Files'},{id:'usb',l:'🔌 USB'},{id:'google',l:'🔗 Google'},{id:'permissions',l:'🔐 Permissions'},{id:'settings',l:'⚙️ Settings'}];
+const VL=[['music_vault','audio assets'],['illustration_vault','charts, diagrams, timelines'],['eternal_wheels_vault','The Eternal Wheels series'],['seal_vault','The Seal record'],['briar_vault','BRIAR preserved source'],['timeline_vault','chronology visuals'],['media_workspace_vault','editing projects'],['social_export_vault','destination-ready exports'],['transcript_vault','transcripts and captions'],['file_trash_vault','deleted files'],['usb_memory_vault','memory on USB'],['watchtower_reference_vault','Watchtower reference material'],['doctrine_review_vault','claim review']];
+const S={
+  home:()=>'<div class="card"><h2>AROD is running.</h2><p>Unified Mastercore shell. Reminders fire on startup. The floor is active. BRIAR reviews outputs.</p><p><span class="badge floor">Floor online</span><span class="badge active">Conscience online</span><span class="badge planned">Adapters staged</span></p><div class="button-row"><button class="primary-btn" onclick="AROD.checkReminders()">Check reminders</button><button class="secondary-btn" onclick="AROD.showTheme()">Change theme</button></div></div>',
+  floor:()=>'<div class="card"><h2>🧱 The Floor</h2><p>'+FLOOR.floor_statement+'</p><h3>Parameters</h3><ul>'+FLOOR.parameters.map(p=>'<li>'+p+'</li>').join('')+'</ul></div>',
+  blog:()=>'<div class="card"><h2>📓 The Iron Rod Response</h2><p>Primary publishing page for the Eternal Wheels series, the Seal material, and related work.</p><div class="button-row"><a href="https://theironrodresponse.blogspot.com/" target="_blank" class="primary-btn">Open blog</a></div><h3>Indexed posts</h3><ul><li><a href="https://theironrodresponse.blogspot.com/2026/10/the-eternal-wheels-of-time.html?m=1" target="_blank">The Eternal Wheels of Time — Part 1</a></li></ul></div>',
+  conscience:()=>'<div class="card"><h2>🧭 BRIAR Conscience Layer</h2><p>BRIAR reviews outputs against the floor. It warns. It does not block. Earl may override any flag.</p><h3>Active checks</h3><ul>'+CHECKS.map(c=>'<li><strong>'+c.id+'</strong><br>'+c.q+'</li>').join('')+'</ul></div>',
+  vaults:()=>'<div class="card"><h2>🗄️ Vaults</h2><p>Registered vaults. Content lands here as documents are added.</p>'+VL.map(v=>'<div class="vault-item"><strong>'+v[0]+'</strong><br>'+v[1]+'</div>').join('')+'</div>',
+  media:()=>'<div class="card"><h2>🎬 Media Studio</h2><p>Edit, organize, prepare images, video, and audio for sharing.</p><h3>Upload</h3><label class="vault-item" style="display:block;text-align:center;cursor:pointer"><input type="file" accept="audio/*,video/*,image/*" multiple hidden/>⬆ Tap to choose audio, video, or image</label><div class="button-row"><button class="secondary-btn" onclick="AROD.transcribe()">Transcribe</button><button class="secondary-btn" onclick="AROD.exportMedia()">Export for social</button></div><p><span class="badge planned">Adapters staged</span></p></div>',
+  files:()=>'<div class="card"><h2>📁 File Operations</h2><p>Copy, cut, paste, move, rename, delete, send-to.</p><div class="button-row"><button class="secondary-btn" onclick="AROD.filePick()">Copy</button><button class="secondary-btn" onclick="AROD.filePick()">Cut</button><button class="secondary-btn" onclick="AROD.filePick()">Paste</button><button class="secondary-btn" onclick="AROD.filePick()">Send to…</button></div><p><span class="badge planned">Adapter staged</span></p></div>',
+  usb:()=>'<div class="card"><h2>🔌 USB Storage</h2><p>Connect an external USB drive, write AROD memory, read it back.</p><div class="button-row"><button class="primary-btn" onclick="AROD.usbSave()">Save AROD memory to USB</button><button class="secondary-btn" onclick="AROD.usbLoad()">Load AROD memory from USB</button></div><p><span class="badge active">Adapter live</span></p></div>',
+  google:()=>'<div class="card"><h2>🔗 Google Adapters</h2><p>Drive, Gmail, Calendar, Sheets. Requires a Google Cloud project with OAuth credentials.</p><div class="button-row"><button class="primary-btn" onclick="AROD.googleSignIn()">Sign in with Google</button></div><p><span class="badge planned">Config pending</span></p></div>',
+  permissions:()=>'<div class="card"><h2>🔐 Device Permissions</h2><p>AROD never claims a permission is granted. Request only. The OS and you decide.</p><div class="button-row"><button class="secondary-btn" onclick="AROD.requestPermission(\'microphone\')">Microphone</button><button class="secondary-btn" onclick="AROD.requestPermission(\'camera\')">Camera</button><button class="secondary-btn" onclick="AROD.requestPermission(\'location\')">Location</button><button class="secondary-btn" onclick="AROD.requestPermission(\'notifications\')">Notifications</button></div><p><span class="badge planned">Adapter staged</span></p></div>',
+  settings:()=>'<div class="card"><h2>⚙️ Settings</h2><h3>Locale</h3><p>English (United States). Dates: Month D, YYYY. Times: 12-hour with AM/PM. Numbers: 1,234.56.</p><h3>Theme</h3><div class="button-row"><button class="secondary-btn" onclick="AROD.showTheme()">Change theme</button></div><h3>Reminders</h3><div class="button-row"><button class="secondary-btn" onclick="AROD.checkReminders()">Check reminders</button><button class="secondary-btn" onclick="AROD.resetReminders()">Reset reminders</button></div><h3>The Forbidden List</h3><p><span class="badge planned">Pending</span> Not yet built.</p></div>'
+};
+function renderTabs(){const b=document.getElementById('tabBar');b.innerHTML='';TABS.forEach(t=>{const x=document.createElement('button');x.className='tab'+(t.id==='home'?' active':'');x.dataset.tab=t.id;x.textContent=t.l;x.onclick=()=>showScreen(t.id);b.appendChild(x);});}
+function showScreen(id)
