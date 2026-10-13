@@ -134,6 +134,7 @@ function rp(p){alert("PERMISSION_BROKER_NOT_CONFIGURED ("+p+")");}
 function rr(){try{localStorage.removeItem("arod_rem")}catch(e){}alert("Reminders reset.");}
 window.AROD={rem:rem,thm:thm,usbSave:usbSave,tc:tc,em:em,fp:fp,gs:gs,rr:rr};
 function boot(){applyTheme(getTheme());renderTabs();show("home");document.getElementById("themeBtn").onclick=thm;document.getElementById("remBtn").onclick=rem;document.getElementById("themeClose").onclick=function(){hm("themeModal")};setTimeout(rem,600);}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(function(){});}
 boot();
 </script>
 </body>
